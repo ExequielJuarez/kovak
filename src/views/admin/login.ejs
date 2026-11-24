@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#0B0B0C">
+  <title><%= titulo %> | Panel Kovak</title>
+  <link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body class="adm-login">
+  <main class="login">
+    <a href="/" class="login__logo" aria-label="Ir a la web"><%- include('../partials/logo') %></a>
+    <form class="login__caja" action="/admin/login" method="POST">
+      <h1>Panel de administración</h1>
+      <p class="apagado">Ingresá para cargar y editar las unidades.</p>
+
+      <% if (error) { %><p class="login__error" role="alert"><%= error %></p><% } %>
+
+      <input type="hidden" name="volver" value="<%= volver %>">
+      <label class="campo">
+        <span>Usuario</span>
+        <input type="text" name="usuario" value="<%= usuario %>" required autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" autofocus>
+      </label>
+      <label class="campo">
+        <span>Contraseña</span>
+        <span class="campo-clave">
+          <input type="password" name="clave" required autocomplete="current-password" id="clave">
+          <button type="button" class="campo-clave__ver" data-ver-clave aria-label="Mostrar contraseña">Ver</button>
+        </span>
+      </label>
+      <button type="submit" class="btn btn--rojo btn--bloque btn--grande">Ingresar</button>
+      <a href="/" class="login__volver"><%- icono('arrow-left') %>Volver a la web</a>
+    </form>
+  </main>
+  <script>
+    document.querySelector('[data-ver-clave]').addEventListener('click', function () {
+      var i = document.getElementById('clave'); var ver = i.type === 'password';
+      i.type = ver ? 'text' : 'password'; this.textContent = ver ? 'Ocultar' : 'Ver';
+      this.setAttribute('aria-label', ver ? 'Ocultar contraseña' : 'Mostrar contraseña');
+    });
+  </script>
+</body>
+</html>

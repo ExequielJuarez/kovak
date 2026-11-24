@@ -1,0 +1,90 @@
+/* ==========================================================
+   VEHÍCULO — ficha de la unidad
+   Celular: galería arriba, datos abajo y barra fija con precio.
+   PC (1024+): galería a la izquierda y datos a la derecha.
+   ========================================================== */
+
+.ficha { padding-top: 16px; padding-bottom: 96px; }
+@media (min-width: 1024px) { .ficha { padding-top: 28px; padding-bottom: 40px; } }
+
+.migas { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 13px; color: var(--apagado); margin-bottom: 16px; }
+.migas a { display: inline-flex; align-items: center; gap: 6px; color: #fff; font-weight: 600; }
+.migas a .icono { width: 16px; height: 16px; color: var(--rojo); }
+.migas a:hover { color: var(--rojo); }
+.migas [aria-current] { color: var(--texto-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 60vw; }
+
+.ficha__grilla { display: grid; gap: 24px; }
+@media (min-width: 1024px) { .ficha__grilla { grid-template-columns: 1.35fr 1fr; gap: 40px; align-items: start; } }
+
+/* ── Galería ───────────────────────────────────────────── */
+.galeria { min-width: 0; }
+.galeria__principal { position: relative; border-radius: var(--radio-grande); overflow: hidden; background: var(--superficie); border: 1px solid var(--borde); aspect-ratio: 3 / 2; margin-inline: calc(var(--gutter) * -1); border-radius: 0; border-inline: 0; }
+@media (min-width: 640px) { .galeria__principal { margin-inline: 0; border-radius: var(--radio-grande); border-inline: 1px solid var(--borde); } }
+.galeria__pista { display: flex; height: 100%; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; scroll-behavior: smooth; }
+.galeria__pista::-webkit-scrollbar { display: none; }
+.galeria__pista img { flex: 0 0 100%; width: 100%; height: 100%; object-fit: cover; scroll-snap-align: center; }
+.galeria__chip { position: absolute; left: 14px; bottom: 14px; }
+.galeria__flecha { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(11, 11, 12, 0.75); backdrop-filter: blur(6px); }
+.galeria__flecha--izq { left: 12px; }
+.galeria__flecha--der { right: 12px; }
+.galeria__contador { position: absolute; right: 14px; bottom: 14px; background: rgba(0, 0, 0, 0.75); padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; }
+.galeria__miniaturas { display: flex; gap: 10px; margin-top: 12px; overflow-x: auto; scrollbar-width: none; }
+.galeria__miniaturas::-webkit-scrollbar { display: none; }
+.galeria__miniaturas button { flex: 0 0 96px; aspect-ratio: 3 / 2; padding: 0; border: 2px solid transparent; border-radius: 12px; overflow: hidden; background: var(--superficie); opacity: 0.6; transition: opacity 0.2s, border-color 0.2s; }
+.galeria__miniaturas button img { width: 100%; height: 100%; object-fit: cover; }
+.galeria__miniaturas button.activa, .galeria__miniaturas button:hover { opacity: 1; border-color: var(--rojo); }
+
+/* ── Datos ─────────────────────────────────────────────── */
+.ficha__info { display: flex; flex-direction: column; gap: 16px; }
+@media (min-width: 1024px) { .ficha__info { position: sticky; top: calc(var(--alto-header) + 20px); } }
+.ficha__titulo { font-family: var(--ff-titulo); font-weight: 900; font-size: clamp(26px, 5vw, 40px); line-height: 1.1; text-transform: uppercase; margin-top: -8px; }
+.ficha__datos { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.ficha__datos li { display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 14px; font-weight: 600; font-size: 14px; }
+@media (min-width: 640px) and (max-width: 1023px) { .ficha__datos { grid-template-columns: repeat(4, 1fr); } }
+.ficha__precio { padding: 16px 0; border-block: 1px solid var(--borde); }
+.ficha__precio .apagado { display: block; font-size: 13px; font-weight: 600; }
+.ficha__precio strong { font-family: var(--ff-titulo); font-weight: 900; font-size: clamp(32px, 6vw, 44px); color: var(--rojo); line-height: 1.1; }
+.ficha__botones { display: grid; gap: 10px; }
+.ficha__botones .btn--grande { font-family: var(--ff-texto); text-transform: none; font-weight: 700; font-size: 16px; }
+.ficha__garantias { display: grid; gap: 10px; font-size: 14px; color: var(--texto-2); }
+.ficha__garantias li { display: flex; align-items: center; gap: 10px; }
+.ficha__garantias .icono { width: 18px; height: 18px; }
+
+/* ── Descripción y ficha técnica ───────────────────────── */
+.ficha__detalle { display: grid; gap: 20px; margin-top: 32px; }
+@media (min-width: 768px) { .ficha__detalle { grid-template-columns: 1fr 1fr; } }
+.caja { background: var(--superficie); border: 1px solid var(--borde); border-radius: var(--radio-grande); padding: 22px; }
+.caja h2 { font-family: var(--ff-titulo); font-weight: 900; font-size: 18px; text-transform: uppercase; margin-bottom: 12px; }
+.caja p { color: var(--texto-2); line-height: 1.7; }
+.tabla-datos { margin: 0; display: grid; }
+.tabla-datos div { display: flex; justify-content: space-between; gap: 16px; padding: 10px 0; border-bottom: 1px solid var(--borde); font-size: 14px; }
+.tabla-datos div:last-child { border-bottom: 0; }
+.tabla-datos dt { color: var(--apagado); }
+.tabla-datos dd { margin: 0; font-weight: 700; text-align: right; }
+.seccion--sin-borde { padding-bottom: 0; }
+
+/* ── Barra fija de compra (solo celular/tablet) ────────── */
+.barra-compra {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 35;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px var(--gutter) calc(10px + env(safe-area-inset-bottom));
+  background: rgba(19, 19, 22, 0.96);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid var(--borde);
+}
+.barra-compra .apagado { display: block; font-size: 12px; }
+.barra-compra strong { font-family: var(--ff-titulo); font-weight: 900; font-size: 22px; }
+.barra-compra .btn { padding-inline: 22px; }
+/* En la ficha, el botón flotante sube para no tapar la barra */
+body:has(.barra-compra) .whatsapp-flotante { display: none; }
+@media (min-width: 1024px) {
+  .barra-compra { display: none; }
+  body:has(.barra-compra) .whatsapp-flotante { display: grid; }
+}

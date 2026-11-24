@@ -1,0 +1,36 @@
+<%# Tarjeta de una unidad (grilla del inicio y de /vehiculos). Recibe: v %>
+<% const url = '/vehiculo/' + v.slug; %>
+<article class="tarjeta">
+  <a href="<%= url %>" class="tarjeta__foto" aria-label="Ver ficha: <%= v.marca %> <%= v.modelo %>">
+    <img src="<%= v.imagenes[0] %>" alt="<%= v.marca %> <%= v.modelo %> <%= v.anio %>" loading="lazy" decoding="async" width="900" height="600">
+    <span class="tarjeta__chips">
+      <span class="chip chip--negro"><%= v.anio %></span>
+      <span class="chip <%= v.condicion === '0km' ? 'chip--rojo' : 'chip--blanco' %>"><%= v.condicion %></span>
+    </span>
+  </a>
+
+  <div class="tarjeta__cuerpo">
+    <a href="<%= url %>" class="tarjeta__titulo">
+      <span class="sobretitulo"><%= v.marca %> &bull; <%= v.segmento %></span>
+      <h3><%= v.modelo %></h3>
+    </a>
+
+    <ul class="tarjeta__datos">
+      <li><%= formatoKm(v.km) %></li>
+      <li><%= v.transmision %></li>
+      <li><%= v.combustible %></li>
+    </ul>
+
+    <div class="tarjeta__precio">
+      <div>
+        <span class="apagado">Precio contado</span>
+        <strong><%= formatoPrecio(v.precio) %></strong>
+      </div>
+      <a href="<%= url %>" class="link-rojo">Ver ficha<%- icono('chevron-right') %></a>
+    </div>
+  </div>
+
+  <div class="tarjeta__pie">
+    <button type="button" class="btn btn--rojo btn--bloque" data-asesor="<%= motivoVehiculo(v) %>" data-vehiculo="<%= v.id %>"><%- icono('message-circle') %>Consultar con asesor</button>
+  </div>
+</article>

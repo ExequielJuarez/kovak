@@ -1,0 +1,5 @@
+/* Página 404 / error */
+.error-pagina { min-height: 60vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; text-align: center; padding-block: 60px; }
+.error-pagina__codigo { font-family: var(--ff-titulo); font-weight: 900; font-size: clamp(80px, 22vw, 160px); line-height: 1; color: var(--rojo); }
+.error-pagina__botones { display: flex; flex-direction: column; gap: 12px; margin-top: 16px; width: 100%; max-width: 420px; }
+@media (min-width: 640px) { .error-pagina__botones { flex-direction: row; max-width: none; width: auto; } }

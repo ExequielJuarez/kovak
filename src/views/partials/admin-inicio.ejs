@@ -1,0 +1,56 @@
+<%# Armazón del panel: cada vista lo abre con admin-inicio y lo cierra con admin-fin %>
+<% const sec = locals.seccion || ''; const nuevas = locals.consultasNuevas || 0;
+   const items = [
+     ['resumen', '/admin', 'Resumen', 'gauge', 0],
+     ['vehiculos', '/admin/vehiculos', 'Unidades', 'car', 0],
+     ['consultas', '/admin/consultas', 'Consultas', 'message-circle', nuevas],
+   ]; %>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#0B0B0C">
+  <title><%= titulo %> | Panel Kovak</title>
+  <link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body class="adm-body">
+<a href="#contenido" class="saltar">Saltar al contenido</a>
+
+<header class="adm-top">
+  <div class="adm-top__fila">
+    <a href="/admin" class="adm-marca" aria-label="Panel Kovak — Resumen"><%- include('logo', { chico: true }) %><small>Panel</small></a>
+
+    <nav class="adm-nav" aria-label="Menú del panel">
+      <% items.forEach(([k, url, nombre, ic, n]) => { %>
+        <a href="<%= url %>" class="<%= sec === k ? 'activo' : '' %>" <%- sec === k ? 'aria-current="page"' : '' %>>
+          <%- icono(ic) %><span><%= nombre %></span><% if (n) { %><b class="adm-nav__n"><%= n %></b><% } %>
+        </a>
+      <% }) %>
+    </nav>
+
+    <div class="adm-top__der">
+      <a href="/" class="icono-btn" target="_blank" rel="noopener" aria-label="Ver la web" title="Ver la web"><%- icono('externo') %></a>
+      <details class="adm-usuario">
+        <summary aria-label="Mi cuenta">
+          <span class="adm-usuario__inicial"><%= admin.nombre.charAt(0) %></span>
+          <span class="adm-usuario__nombre"><%= admin.nombre %></span>
+          <%- icono('chevron-down') %>
+        </summary>
+        <div class="adm-usuario__menu">
+          <span class="adm-usuario__email">Usuario: <%= admin.usuario %></span>
+          <a href="/" target="_blank" rel="noopener">Ver la web ↗</a>
+          <form action="/admin/logout" method="POST"><button type="submit">Cerrar sesión</button></form>
+        </div>
+      </details>
+    </div>
+  </div>
+</header>
+
+<main class="adm-main" id="contenido">

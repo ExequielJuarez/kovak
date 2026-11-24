@@ -1,0 +1,59 @@
+<%- include('../partials/admin-inicio') %>
+<% const chips = [['', 'Todas', datos.total], ['publicados', 'Publicadas', datos.publicados], ['ocultos', 'Ocultas', datos.ocultos], ['destacados', 'Destacadas', datos.destacados]]; %>
+
+<div class="adm-cab">
+  <div>
+    <span class="sobretitulo">Stock</span>
+    <h1 class="titulo-seccion">Unidades</h1>
+  </div>
+  <a href="/admin/vehiculos/nuevo" class="btn btn--rojo"><%- icono('car') %>Nueva unidad</a>
+</div>
+
+<form class="adm-filtros" action="/admin/vehiculos" method="GET" role="search">
+  <label class="buscador__input">
+    <%- icono('search') %>
+    <input type="search" name="q" value="<%= q %>" placeholder="Buscar por marca o modelo" aria-label="Buscar unidades" maxlength="60">
+  </label>
+  <% if (estado) { %><input type="hidden" name="estado" value="<%= estado %>"><% } %>
+  <div class="chips" role="list">
+    <% chips.forEach(([valor, texto, n]) => { %>
+      <a role="listitem" href="/admin/vehiculos?<%= new URLSearchParams({ ...(q && { q }), ...(valor && { estado: valor }) }) %>" class="filtro-chip <%= estado === valor ? 'activo' : '' %>"><%= texto %> <small><%= n %></small></a>
+    <% }) %>
+  </div>
+</form>
+
+<% if (!lista.length) { %>
+  <div class="panel vacio">
+    <p>No hay unidades<%= q ? ` que coincidan con “${q}”` : '' %>.</p>
+    <a href="/admin/vehiculos/nuevo" class="btn btn--rojo">Cargar una unidad</a>
+  </div>
+<% } else { %>
+  <ul class="adm-lista">
+    <% lista.forEach((v) => { %>
+      <li class="adm-fila <%= v.publicado ? '' : 'adm-fila--oculta' %>">
+        <a href="/admin/vehiculos/<%= v.id %>/editar" class="adm-fila__foto">
+          <img src="<%= v.imagenes[0] %>" alt="" loading="lazy">
+          <span class="adm-fila__fotos"><%= v.fotos.length %> foto<%= v.fotos.length === 1 ? '' : 's' %></span>
+        </a>
+        <div class="adm-fila__info">
+          <a href="/admin/vehiculos/<%= v.id %>/editar"><strong><%= v.marca %> <%= v.modelo %></strong></a>
+          <span class="apagado"><%= v.anio %> · <%= formatoKm(v.km) %> · <%= v.segmento %> · <%= v.condicion %></span>
+          <span class="adm-fila__precio"><%= formatoPrecio(v.precio) %></span>
+        </div>
+        <div class="adm-fila__switches">
+          <button type="button" class="interruptor" role="switch" aria-checked="<%= v.publicado %>" data-alternar="/admin/vehiculos/<%= v.id %>/publicado" data-campo="publicado"><span></span>Publicada</button>
+          <button type="button" class="interruptor" role="switch" aria-checked="<%= v.destacado %>" data-alternar="/admin/vehiculos/<%= v.id %>/destacado" data-campo="destacado"><span></span>Destacada</button>
+        </div>
+        <div class="adm-fila__acciones">
+          <% if (v.publicado) { %><a href="/vehiculo/<%= v.slug %>" target="_blank" rel="noopener" class="icono-btn" aria-label="Ver en la web" title="Ver en la web"><%- icono('externo') %></a><% } %>
+          <a href="/admin/vehiculos/<%= v.id %>/editar" class="btn btn--oscuro btn--chico">Editar</a>
+          <form action="/admin/vehiculos/<%= v.id %>?_method=DELETE" method="POST" data-confirmar="¿Eliminar <%= v.marca %> <%= v.modelo %>? Se borran también sus fotos y no se puede deshacer.">
+            <button type="submit" class="icono-btn icono-btn--peligro" aria-label="Eliminar" title="Eliminar"><%- icono('x') %></button>
+          </form>
+        </div>
+      </li>
+    <% }) %>
+  </ul>
+<% } %>
+
+<%- include('../partials/admin-fin') %>

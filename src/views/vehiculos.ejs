@@ -1,0 +1,94 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<% const f = filtros; const sel = (a, b) => String(a) === String(b) ? 'selected' : ''; %>
+
+<section class="contenedor listado">
+  <%# ═════════ Encabezado: título + orden ═════════ %>
+  <div class="listado__cab">
+    <div>
+      <span class="sobretitulo">Stock actualizado</span>
+      <h1 class="titulo-seccion">Vehículos <span class="rojo">disponibles</span></h1>
+      <p class="apagado">Conocé nuestro stock y encontrá tu próximo vehículo.</p>
+    </div>
+  </div>
+
+  <form class="listado__grilla" id="formFiltros" action="/vehiculos" method="GET">
+    <%# ═════════ Filtros: columna en PC, panel deslizable en celular/tablet ═════════ %>
+    <div class="filtros-fondo" id="filtrosFondo" hidden></div>
+    <aside class="filtros" id="filtros" aria-label="Filtros">
+      <div class="filtros__cab">
+        <h2><%- icono('sliders', 'icono--rojo') %>Filtros</h2>
+        <button type="button" class="icono-btn filtros__cerrar" id="filtrosCerrar" aria-label="Cerrar filtros"><%- icono('x') %></button>
+      </div>
+
+      <label class="campo">
+        <span>Buscar</span>
+        <span class="buscador__input buscador__input--chico">
+          <%- icono('search') %>
+          <input type="search" name="q" value="<%= f.q %>" placeholder="Marca, modelo o versión" maxlength="60" autocomplete="off">
+        </span>
+      </label>
+
+      <label class="campo">
+        <span><%- icono('tag', 'icono--rojo') %>Marca</span>
+        <select name="marca" data-auto>
+          <option value="">Todas las marcas</option>
+          <% opciones.marcas.forEach((m) => { %><option value="<%= m %>" <%= sel(f.marca, m) %>><%= m %></option><% }) %>
+        </select>
+      </label>
+
+      <label class="campo">
+        <span><%- icono('car', 'icono--rojo') %>Tipo</span>
+        <select name="segmento" data-auto>
+          <option value="">Todos los tipos</option>
+          <% opciones.segmentos.forEach((s) => { %><option value="<%= s %>" <%= sel(f.segmento, s) %>><%= s %></option><% }) %>
+        </select>
+      </label>
+
+      <div class="campo">
+        <span><%- icono('calendar', 'icono--rojo') %>Año</span>
+        <div class="dos-columnas">
+          <select name="anioMin" aria-label="Año desde" data-auto><option value="">Desde</option><% [...opciones.anios].reverse().forEach((a) => { %><option <%= sel(f.anioMin, a) %>><%= a %></option><% }) %></select>
+          <select name="anioMax" aria-label="Año hasta" data-auto><option value="">Hasta</option><% opciones.anios.forEach((a) => { %><option <%= sel(f.anioMax, a) %>><%= a %></option><% }) %></select>
+        </div>
+      </div>
+
+      <div class="campo">
+        <span><%- icono('badge-dollar-sign', 'icono--rojo') %>Precio</span>
+        <div class="dos-columnas">
+          <label class="campo__plata"><b>$</b><input type="number" name="precioMin" value="<%= f.precioMin ?? '' %>" placeholder="Desde" min="0" inputmode="numeric" aria-label="Precio desde"></label>
+          <label class="campo__plata"><b>$</b><input type="number" name="precioMax" value="<%= f.precioMax ?? '' %>" placeholder="Hasta" min="0" inputmode="numeric" aria-label="Precio hasta"></label>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn--rojo btn--bloque"><%- icono('sliders') %>Aplicar filtros</button>
+      <% if (activos) { %><a href="/vehiculos" class="filtros__limpiar">Limpiar todos los filtros</a><% } %>
+    </aside>
+
+    <%# ═════════ Resultados ═════════ %>
+    <div class="resultados">
+      <div class="resultados__barra">
+        <button type="button" class="btn btn--panel resultados__btn-filtros" id="btnFiltros" aria-controls="filtros" aria-expanded="false">
+          <%- icono('sliders', 'icono--rojo') %>Filtros<% if (activos) { %><span class="burbuja"><%= activos %></span><% } %>
+        </button>
+        <p class="contador"><strong><%= vehiculos.length %></strong> <%= vehiculos.length === 1 ? 'vehículo encontrado' : 'vehículos encontrados' %></p>
+        <label class="orden">
+          <span class="solo-pc">Ordenar por:</span>
+          <select name="orden" data-auto aria-label="Ordenar">
+            <% opciones.ordenes.forEach((o) => { %><option value="<%= o.valor %>" <%= sel(f.orden, o.valor) %>><%= o.texto %></option><% }) %>
+          </select>
+        </label>
+      </div>
+
+      <% if (vehiculos.length) { %>
+        <div class="grilla grilla--listado">
+          <% vehiculos.forEach((v) => { %><%- include('partials/tarjeta-vehiculo', { v }) %><% }) %>
+        </div>
+      <% } else { %>
+        <%- include('partials/sin-resultados') %>
+      <% } %>
+    </div>
+  </form>
+</section>
+
+<%- include('partials/footer') %>

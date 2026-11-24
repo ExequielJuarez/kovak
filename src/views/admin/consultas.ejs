@@ -1,0 +1,54 @@
+<%- include('../partials/admin-inicio') %>
+<% const chips = [['', 'Todas'], ['nuevas', 'Sin leer'], ['leidas', 'Leídas']];
+   const soloNumeros = (t) => String(t).replace(/\D/g, '');
+   // Si el número es local (381…), se le agrega el código de Argentina para WhatsApp
+   const wa = (t) => { const n = soloNumeros(t); return n.startsWith('54') ? n : '549' + n.replace(/^0/, ''); }; %>
+
+<div class="adm-cab">
+  <div>
+    <span class="sobretitulo">Desde la web</span>
+    <h1 class="titulo-seccion">Consultas</h1>
+  </div>
+</div>
+
+<div class="chips">
+  <% chips.forEach(([valor, texto]) => { %>
+    <a href="/admin/consultas<%= valor ? '?estado=' + valor : '' %>" class="filtro-chip <%= estado === valor ? 'activo' : '' %>"><%= texto %><% if (valor === 'nuevas' && consultasNuevas) { %> <small><%= consultasNuevas %></small><% } %></a>
+  <% }) %>
+</div>
+
+<% if (!lista.length) { %>
+  <div class="panel vacio"><p>No hay consultas<%= estado === 'nuevas' ? ' sin leer' : '' %>.</p></div>
+<% } else { %>
+  <ul class="consultas">
+    <% lista.forEach((c) => { %>
+      <li class="consulta <%= c.leida ? '' : 'consulta--nueva' %>">
+        <div class="consulta__cab">
+          <div>
+            <strong class="consulta__nombre"><%= c.nombre %></strong>
+            <small class="apagado"><%= formatoFecha(c.creado_en) %></small>
+          </div>
+          <% if (!c.leida) { %><span class="estado estado--nueva">Nueva</span><% } %>
+        </div>
+        <p class="consulta__motivo"><%= c.motivo %></p>
+        <% if (c.vehiculo) { %>
+          <a class="link-rojo" href="/admin/vehiculos/<%= c.vehiculo.id %>/editar"><%- icono('car') %><%= c.vehiculo.anio %> <%= c.vehiculo.marca %> <%= c.vehiculo.modelo %></a>
+        <% } %>
+        <% if (c.mensaje) { %><p class="consulta__mensaje">“<%= c.mensaje %>”</p><% } %>
+        <div class="consulta__acciones">
+          <a href="https://wa.me/<%= wa(c.telefono) %>?text=<%= encodeURIComponent(`Hola ${c.nombre}! Te escribimos de Kovak Automotores por tu consulta: ${c.motivo}`) %>" target="_blank" rel="noopener" class="btn btn--verde btn--chico"><%- icono('message-circle') %>WhatsApp</a>
+          <a href="tel:<%= soloNumeros(c.telefono) %>" class="btn btn--oscuro btn--chico"><%= c.telefono %></a>
+          <form action="/admin/consultas/<%= c.id %>?_method=PATCH" method="POST">
+            <input type="hidden" name="leida" value="<%= c.leida ? 0 : 1 %>">
+            <button type="submit" class="btn btn--oscuro btn--chico"><%= c.leida ? 'Marcar sin leer' : 'Marcar leída' %></button>
+          </form>
+          <form action="/admin/consultas/<%= c.id %>?_method=DELETE" method="POST" data-confirmar="¿Eliminar la consulta de <%= c.nombre %>? No se puede deshacer.">
+            <button type="submit" class="icono-btn icono-btn--peligro" aria-label="Eliminar consulta"><%- icono('x') %></button>
+          </form>
+        </div>
+      </li>
+    <% }) %>
+  </ul>
+<% } %>
+
+<%- include('../partials/admin-fin') %>

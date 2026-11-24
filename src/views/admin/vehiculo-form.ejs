@@ -1,0 +1,133 @@
+<%- include('../partials/admin-inicio') %>
+<% const v = vehiculo; const e = errores; const editando = Boolean(v.id);
+   const err = (k) => e[k] ? `<small class="campo__error">${e[k].msg}</small>` : '';
+   const sel = (a, b) => String(a) === String(b) ? 'selected' : '';
+   const opciones = (lista, actual, vacio) => `<option value="">${vacio}</option>` + lista.map((o) => `<option ${sel(actual, o)}>${o}</option>`).join(''); %>
+
+<div class="adm-cab">
+  <div>
+    <a href="/admin/vehiculos" class="migas-admin"><%- icono('arrow-left') %>Unidades</a>
+    <h1 class="titulo-seccion"><%= editando ? `${v.marca} ${v.modelo}` : 'Nueva unidad' %></h1>
+  </div>
+  <% if (editando && v.publicado && v.slug) { %><a href="/vehiculo/<%= v.slug %>" target="_blank" rel="noopener" class="btn btn--oscuro"><%- icono('externo') %>Ver en la web</a><% } %>
+</div>
+
+<% if (Object.keys(e).length) { %>
+  <p class="adm-aviso" role="alert">Revisá los campos marcados en rojo.</p>
+<% } %>
+
+<form class="form-auto" id="formAuto" action="<%= editando ? `/admin/vehiculos/${v.id}?_method=PUT` : '/admin/vehiculos' %>" method="POST" enctype="multipart/form-data" novalidate>
+
+  <section class="panel">
+    <h2 class="panel__titulo">Datos de la unidad</h2>
+    <div class="form-grilla">
+      <label class="campo <%= e.marca ? 'con-error' : '' %>">
+        <span>Marca *</span>
+        <input type="text" name="marca" value="<%= v.marca %>" maxlength="60" required list="marcas" placeholder="Ej: Toyota" autocomplete="off">
+        <%- err('marca') %>
+      </label>
+      <datalist id="marcas"><% ['Chevrolet','Citroën','Fiat','Ford','Honda','Hyundai','Jeep','Nissan','Peugeot','Renault','Toyota','Volkswagen'].forEach((m) => { %><option value="<%= m %>"><% }) %></datalist>
+      <label class="campo campo--doble <%= e.modelo ? 'con-error' : '' %>">
+        <span>Modelo y versión *</span>
+        <input type="text" name="modelo" value="<%= v.modelo %>" maxlength="120" required placeholder="Ej: Hilux SRX 2.8 TDI 4x4">
+        <%- err('modelo') %>
+      </label>
+      <label class="campo <%= e.anio ? 'con-error' : '' %>">
+        <span>Año *</span>
+        <input type="number" name="anio" value="<%= v.anio %>" min="1950" max="<%= new Date().getFullYear() + 1 %>" required inputmode="numeric" placeholder="<%= new Date().getFullYear() %>">
+        <%- err('anio') %>
+      </label>
+      <label class="campo <%= e.segmento ? 'con-error' : '' %>">
+        <span>Tipo *</span>
+        <select name="segmento" required><%- opciones(listas.segmentos, v.segmento, 'Elegí…') %></select>
+        <%- err('segmento') %>
+      </label>
+      <label class="campo <%= e.condicion ? 'con-error' : '' %>">
+        <span>Condición *</span>
+        <select name="condicion" id="condicion" required><%- opciones(listas.condiciones, v.condicion, 'Elegí…') %></select>
+        <%- err('condicion') %>
+      </label>
+      <label class="campo <%= e.km ? 'con-error' : '' %>" id="campoKm">
+        <span>Kilómetros</span>
+        <input type="number" name="km" value="<%= v.km %>" min="0" inputmode="numeric" placeholder="Ej: 18500">
+        <%- err('km') %>
+      </label>
+      <label class="campo <%= e.transmision ? 'con-error' : '' %>">
+        <span>Transmisión *</span>
+        <select name="transmision" required><%- opciones(listas.transmisiones, v.transmision, 'Elegí…') %></select>
+        <%- err('transmision') %>
+      </label>
+      <label class="campo <%= e.combustible ? 'con-error' : '' %>">
+        <span>Combustible *</span>
+        <select name="combustible" required><%- opciones(listas.combustibles, v.combustible, 'Elegí…') %></select>
+        <%- err('combustible') %>
+      </label>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2 class="panel__titulo">Precio y visibilidad</h2>
+    <div class="form-grilla">
+      <label class="campo <%= e.precio ? 'con-error' : '' %>">
+        <span>Precio contado *</span>
+        <span class="campo__plata"><b>$</b><input type="number" name="precio" value="<%= v.precio %>" min="1" required inputmode="numeric" placeholder="Ej: 46900"></span>
+        <%- err('precio') %>
+      </label>
+      <label class="check">
+        <input type="checkbox" name="publicado" value="1" <%= v.publicado ? 'checked' : '' %>>
+        <span><strong>Publicada</strong><small>Se ve en la web. Desmarcala si se vendió o está reservada.</small></span>
+      </label>
+      <label class="check">
+        <input type="checkbox" name="destacado" value="1" <%= v.destacado ? 'checked' : '' %>>
+        <span><strong>Destacada</strong><small>Aparece en el carrusel del inicio.</small></span>
+      </label>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel__cab">
+      <h2 class="panel__titulo">Fotos</h2>
+      <span class="apagado">Hasta <%= maxFotos %> · JPG, PNG o WEBP · máx. 5 MB c/u</span>
+    </div>
+    <% if (e.fotos) { %><p class="campo__error campo__error--bloque"><%= e.fotos.msg %></p><% } %>
+
+    <% if (v.fotos && v.fotos.length) { %>
+      <p class="apagado ayuda">Tocá <strong>Portada</strong> para elegir la foto principal o <strong>Quitar</strong> para borrarla al guardar.</p>
+      <ul class="fotos-actuales">
+        <% v.fotos.forEach((f, i) => { %>
+          <li>
+            <img src="<%= f.ruta %>" alt="Foto <%= i + 1 %>" loading="lazy">
+            <div class="fotos-actuales__acciones">
+              <label class="pastilla"><input type="radio" name="portada" value="f<%= f.id %>" <%= i === 0 ? 'checked' : '' %>><span>Portada</span></label>
+              <label class="pastilla pastilla--peligro"><input type="checkbox" name="borrarFotos" value="<%= f.id %>"><span>Quitar</span></label>
+            </div>
+          </li>
+        <% }) %>
+      </ul>
+    <% } %>
+
+    <label class="subir-fotos" id="zonaFotos">
+      <input type="file" name="fotos" id="inputFotos" accept="image/jpeg,image/png,image/webp" multiple>
+      <%- icono('upload', 'icono--rojo') %>
+      <strong><%= v.fotos && v.fotos.length ? 'Agregar más fotos' : 'Subir fotos' %></strong>
+      <span class="apagado">Tocá o arrastrá las fotos acá<%= v.fotos && v.fotos.length ? '' : ' (la primera queda de portada)' %></span>
+    </label>
+    <ul class="fotos-nuevas" id="previas" aria-live="polite"></ul>
+  </section>
+
+  <section class="panel">
+    <h2 class="panel__titulo">Descripción</h2>
+    <label class="campo <%= e.descripcion ? 'con-error' : '' %>">
+      <span>Equipamiento, estado, detalles</span>
+      <textarea name="descripcion" rows="5" maxlength="2000" placeholder="Ej: Única mano, cámara 360°, tapizado de cuero, garantía oficial vigente…"><%= v.descripcion || '' %></textarea>
+      <%- err('descripcion') %>
+    </label>
+  </section>
+
+  <div class="barra-guardar">
+    <a href="/admin/vehiculos" class="btn btn--oscuro">Cancelar</a>
+    <button type="submit" class="btn btn--rojo"><%= editando ? 'Guardar cambios' : 'Publicar unidad' %></button>
+  </div>
+</form>
+
+<%- include('../partials/admin-fin') %>

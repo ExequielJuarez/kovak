@@ -1,0 +1,46 @@
+<%# ═════════ Modal "Consultar con asesor" (lo abre cualquier botón con data-asesor="motivo") ═════════ %>
+<div class="modal" id="modalAsesor" role="dialog" aria-modal="true" aria-labelledby="asesorTitulo" hidden>
+  <div class="modal__caja modal__caja--chica">
+    <div class="modal__cab">
+      <h3 id="asesorTitulo"><span class="punto"></span>Consultar con asesor</h3>
+      <button type="button" class="icono-btn" data-cerrar aria-label="Cerrar"><%- icono('x') %></button>
+    </div>
+
+    <form class="asesor" id="formAsesor" action="/consultas" method="POST" novalidate>
+      <div class="asesor__motivo">
+        <span>Unidad / Motivo:</span>
+        <p id="asesorMotivo"></p>
+        <input type="hidden" name="motivo" id="asesorMotivoInput">
+        <input type="hidden" name="vehiculoId" id="asesorVehiculoInput">
+      </div>
+
+      <label class="campo">
+        <span>Nombre y apellido *</span>
+        <input type="text" name="nombre" required maxlength="80" autocomplete="name" placeholder="Ej: Martín González">
+        <small class="campo__error" data-error="nombre"></small>
+      </label>
+      <label class="campo">
+        <span>WhatsApp / Teléfono *</span>
+        <input type="tel" name="telefono" required maxlength="20" autocomplete="tel" inputmode="tel" placeholder="Ej: 381 555-0192">
+        <small class="campo__error" data-error="telefono"></small>
+      </label>
+      <label class="campo">
+        <span>Mensaje (opcional)</span>
+        <textarea name="mensaje" rows="2" maxlength="500" placeholder="Quisiera consultar precio final, permuta o financiación..."></textarea>
+      </label>
+
+      <div class="asesor__botones">
+        <button type="submit" class="btn btn--rojo btn--bloque"><%- icono('send') %>Enviar consulta</button>
+        <button type="button" class="btn btn--verde btn--bloque" id="asesorWhatsapp"><%- icono('message-circle') %>Iniciar chat por WhatsApp</button>
+      </div>
+    </form>
+
+    <div class="asesor__listo" id="asesorListo" hidden>
+      <div class="asesor__check"><%- icono('check-circle') %></div>
+      <h4>¡Consulta recibida!</h4>
+      <p>Un asesor comercial de <strong>Kovak Automotores</strong> te responderá a la brevedad.</p>
+      <a href="#" class="btn btn--verde" id="asesorListoWhatsapp" target="_blank" rel="noopener"><%- icono('message-circle') %>Seguir por WhatsApp</a>
+      <button type="button" class="btn btn--oscuro" data-cerrar>Volver al catálogo</button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,76 @@
+<%- include('../partials/admin-inicio') %>
+
+<div class="adm-cab">
+  <div>
+    <span class="sobretitulo">Hola, <%= admin.nombre %></span>
+    <h1 class="titulo-seccion">Resumen</h1>
+  </div>
+  <a href="/admin/vehiculos/nuevo" class="btn btn--rojo"><%- icono('car') %>Nueva unidad</a>
+</div>
+
+<section class="kpis" aria-label="Números del stock">
+  <a href="/admin/vehiculos?estado=publicados" class="kpi">
+    <span class="kpi__t">Publicadas</span>
+    <strong class="kpi__n"><%= datos.publicados %></strong>
+    <small><%= datos.ocultos %> oculta<%= datos.ocultos === 1 ? '' : 's' %></small>
+  </a>
+  <a href="/admin/vehiculos?estado=destacados" class="kpi">
+    <span class="kpi__t">Destacadas</span>
+    <strong class="kpi__n"><%= datos.destacados %></strong>
+    <small>en el carrusel del inicio</small>
+  </a>
+  <a href="/admin/consultas?estado=nuevas" class="kpi <%= datos.consultasNuevas ? 'kpi--rojo' : '' %>">
+    <span class="kpi__t">Consultas nuevas</span>
+    <strong class="kpi__n"><%= datos.consultasNuevas %></strong>
+    <small>sin leer</small>
+  </a>
+  <div class="kpi">
+    <span class="kpi__t">Valor del stock</span>
+    <strong class="kpi__n kpi__n--chico"><%= formatoPrecio(datos.valorStock) %></strong>
+    <small>suma de lo publicado</small>
+  </div>
+</section>
+
+<div class="adm-grilla-2">
+  <section class="panel">
+    <div class="panel__cab">
+      <h2>Últimas consultas</h2>
+      <a href="/admin/consultas" class="link-rojo">Ver todas<%- icono('chevron-right') %></a>
+    </div>
+    <% if (!ultimas.length) { %>
+      <p class="apagado">Todavía no llegaron consultas. Aparecen acá cuando alguien usa “Consultar con asesor” en la web.</p>
+    <% } else { %>
+      <ul class="lista-mini">
+        <% ultimas.forEach((c) => { %>
+          <li class="<%= c.leida ? '' : 'nueva' %>">
+            <div>
+              <strong><%= c.nombre %></strong>
+              <span class="apagado"><%= c.motivo %></span>
+            </div>
+            <small class="apagado"><%= formatoFecha(c.creado_en) %></small>
+          </li>
+        <% }) %>
+      </ul>
+    <% } %>
+  </section>
+
+  <section class="panel">
+    <div class="panel__cab">
+      <h2>Editadas hace poco</h2>
+      <a href="/admin/vehiculos" class="link-rojo">Ver todas<%- icono('chevron-right') %></a>
+    </div>
+    <ul class="lista-mini">
+      <% recientes.forEach((v) => { %>
+        <li>
+          <a href="/admin/vehiculos/<%= v.id %>/editar" class="lista-mini__auto">
+            <img src="<%= v.imagenes[0] %>" alt="" loading="lazy">
+            <span><strong><%= v.marca %> <%= v.modelo %></strong><span class="apagado"><%= v.anio %> · <%= formatoPrecio(v.precio) %></span></span>
+          </a>
+          <% if (!v.publicado) { %><span class="estado estado--oculto">Oculta</span><% } %>
+        </li>
+      <% }) %>
+    </ul>
+  </section>
+</div>
+
+<%- include('../partials/admin-fin') %>

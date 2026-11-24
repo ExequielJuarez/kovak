@@ -1,0 +1,118 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<% const v = vehiculo; const nombre = `${v.marca} ${v.modelo}`; const fotos = v.imagenes; %>
+<% const msjWhatsapp = `Hola Kovak Automotores! Me interesa el ${v.anio} ${nombre} (${formatoPrecio(v.precio)}). ¿Sigue disponible?`; %>
+
+<section class="contenedor ficha">
+  <nav class="migas" aria-label="Estás en">
+    <a href="/vehiculos"><%- icono('arrow-left') %>Vehículos</a>
+    <span>/</span>
+    <span><%= v.marca %></span>
+    <span>/</span>
+    <span aria-current="page"><%= v.modelo %></span>
+  </nav>
+
+  <div class="ficha__grilla">
+    <%# ═════════ Galería: foto grande con flechas + miniaturas ═════════ %>
+    <div class="galeria" id="galeria" data-total="<%= fotos.length %>">
+      <div class="galeria__principal">
+        <div class="galeria__pista" id="galeriaPista">
+          <% fotos.forEach((src, i) => { %>
+            <img src="<%= src %>" alt="<%= nombre %> — foto <%= i + 1 %>" <%= i ? 'loading=lazy' : 'fetchpriority=high' %> decoding="async" width="900" height="600">
+          <% }) %>
+        </div>
+        <span class="chip <%= v.condicion === '0km' ? 'chip--rojo' : 'chip--blanco' %> galeria__chip"><%= v.anio %> &bull; <%= v.condicion %></span>
+        <% if (fotos.length > 1) { %>
+          <button type="button" class="flecha galeria__flecha galeria__flecha--izq" data-galeria="-1" aria-label="Foto anterior"><%- icono('chevron-left') %></button>
+          <button type="button" class="flecha galeria__flecha galeria__flecha--der" data-galeria="1" aria-label="Foto siguiente"><%- icono('chevron-right') %></button>
+          <span class="galeria__contador" id="galeriaContador">1 / <%= fotos.length %></span>
+        <% } %>
+      </div>
+      <% if (fotos.length > 1) { %>
+        <div class="galeria__miniaturas">
+          <% fotos.forEach((src, i) => { %>
+            <button type="button" class="<%= i ? '' : 'activa' %>" data-foto="<%= i %>" aria-label="Ver foto <%= i + 1 %>"><img src="<%= src %>" alt="" loading="lazy"></button>
+          <% }) %>
+        </div>
+      <% } %>
+    </div>
+
+    <%# ═════════ Datos + botones ═════════ %>
+    <div class="ficha__info">
+      <span class="sobretitulo"><%= v.marca %> &bull; <%= v.segmento %></span>
+      <h1 class="ficha__titulo"><%= nombre %></h1>
+
+      <ul class="ficha__datos">
+        <li><%- icono('calendar', 'icono--rojo') %><%= v.anio %></li>
+        <li><%- icono('gauge', 'icono--rojo') %><%= formatoKm(v.km) %></li>
+        <li><%- icono('caja', 'icono--rojo') %><%= v.transmision %></li>
+        <li><%- icono('fuel', 'icono--rojo') %><%= v.combustible %></li>
+      </ul>
+
+      <div class="ficha__precio">
+        <span class="apagado">Precio contado</span>
+        <strong><%= formatoPrecio(v.precio) %></strong>
+      </div>
+
+      <div class="ficha__botones">
+        <a href="<%= concesionaria.whatsapp(msjWhatsapp) %>" class="btn btn--verde btn--grande btn--bloque" target="_blank" rel="noopener"><%- icono('message-circle') %>Consultar por WhatsApp</a>
+        <button type="button" class="btn btn--rojo btn--grande btn--bloque" data-asesor="<%= motivoVehiculo(v) %>" data-vehiculo="<%= v.id %>"><%- icono('message-circle') %>Consultar con asesor</button>
+        <button type="button" class="btn btn--oscuro btn--bloque" data-asesor="Agendar una visita: <%= motivoVehiculo(v) %>" data-vehiculo="<%= v.id %>"><%- icono('calendar', 'icono--rojo') %>Agendar una visita</button>
+      </div>
+
+      <ul class="ficha__garantias">
+        <li><%- icono('shield', 'icono--rojo') %>Unidad peritada con garantía mecánica</li>
+        <li><%- icono('badge-dollar-sign', 'icono--rojo') %>Tomamos tu usado en parte de pago</li>
+        <li><%- icono('map-pin', 'icono--rojo') %><%= concesionaria.direccion %></li>
+      </ul>
+    </div>
+  </div>
+
+  <%# ═════════ Descripción + ficha técnica ═════════ %>
+  <div class="ficha__detalle">
+    <div class="caja">
+      <h2>Descripción</h2>
+      <p><%= v.descripcion %></p>
+    </div>
+    <div class="caja">
+      <h2>Ficha técnica</h2>
+      <dl class="tabla-datos">
+        <div><dt>Marca</dt><dd><%= v.marca %></dd></div>
+        <div><dt>Modelo</dt><dd><%= v.modelo %></dd></div>
+        <div><dt>Año</dt><dd><%= v.anio %></dd></div>
+        <div><dt>Tipo</dt><dd><%= v.segmento %></dd></div>
+        <div><dt>Condición</dt><dd><%= v.condicion %></dd></div>
+        <div><dt>Kilometraje</dt><dd><%= formatoKm(v.km) %></dd></div>
+        <div><dt>Transmisión</dt><dd><%= v.transmision %></dd></div>
+        <div><dt>Combustible</dt><dd><%= v.combustible %></dd></div>
+      </dl>
+    </div>
+  </div>
+
+  <%# ═════════ Relacionados ═════════ %>
+  <% if (relacionados.length) { %>
+    <div class="seccion seccion--sin-borde">
+      <div class="seccion__cab">
+        <div>
+          <span class="sobretitulo">Seguí mirando</span>
+          <h2 class="titulo-seccion">También te puede interesar</h2>
+        </div>
+        <a href="/vehiculos" class="btn btn--oscuro btn--titulo">Ver todo<%- icono('arrow-right') %></a>
+      </div>
+      <div class="grilla">
+        <% relacionados.forEach((r) => { %><%- include('partials/tarjeta-vehiculo', { v: r }) %><% }) %>
+      </div>
+    </div>
+  <% } %>
+</section>
+
+<%# Barra fija abajo en el celular: precio + WhatsApp siempre a mano %>
+<div class="barra-compra">
+  <div>
+    <span class="apagado"><%= v.marca %> <%= v.anio %></span>
+    <strong><%= formatoPrecio(v.precio) %></strong>
+  </div>
+  <a href="<%= concesionaria.whatsapp(msjWhatsapp) %>" class="btn btn--verde" target="_blank" rel="noopener"><%- icono('message-circle') %>WhatsApp</a>
+</div>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,49 @@
+<% const activo = (n) => locals.navActivo === n ? 'activo' : ''; %>
+<a href="#contenido" class="saltar">Saltar al contenido</a>
+
+<%# ═════════ Header fijo ═════════ %>
+<header class="header" id="header">
+  <div class="contenedor header__barra">
+    <a href="/" class="marca-link" aria-label="Kovak Automotores — Inicio"><%- include('logo') %></a>
+
+    <nav class="nav" aria-label="Principal">
+      <a href="/" class="<%= activo('inicio') %>">Inicio</a>
+      <a href="/#destacados">Destacados</a>
+      <a href="/vehiculos" class="<%= activo('vehiculos') %>">Vehículos disponibles</a>
+      <a href="/#consignaciones">Vender mi auto</a>
+      <a href="/#clientes">Clientes</a>
+    </nav>
+
+    <div class="header__acciones">
+      <button type="button" class="btn btn--rojo btn--pildora header__asesor" data-asesor="Asesoramiento Comercial">
+        <%- icono('message-circle') %><span>Consultar<span class="solo-pc"> con asesor</span></span>
+      </button>
+      <button type="button" class="icono-btn header__menu-btn" id="btnMenu" aria-label="Abrir menú" aria-expanded="false" aria-controls="drawer">
+        <%- icono('menu') %>
+      </button>
+    </div>
+  </div>
+</header>
+
+<%# ═════════ Menú del celular / tablet ═════════ %>
+<div class="drawer-fondo" id="drawerFondo" hidden></div>
+<aside class="drawer" id="drawer" aria-label="Menú" aria-hidden="true">
+  <div class="drawer__cab">
+    <a href="/" aria-label="Inicio"><%- include('logo', { chico: true }) %></a>
+    <button type="button" class="icono-btn" id="drawerCerrar" aria-label="Cerrar menú"><%- icono('x') %></button>
+  </div>
+  <nav class="drawer__lista">
+    <a href="/" class="<%= activo('inicio') %>">Inicio<%- icono('chevron-right') %></a>
+    <a href="/#destacados">Destacados<%- icono('chevron-right') %></a>
+    <a href="/vehiculos" class="<%= activo('vehiculos') %>">Vehículos disponibles<%- icono('chevron-right') %></a>
+    <a href="/#consignaciones">Vender mi auto<%- icono('chevron-right') %></a>
+    <a href="/#clientes">Clientes<%- icono('chevron-right') %></a>
+  </nav>
+  <button type="button" class="btn btn--rojo btn--bloque" data-asesor="Asesoramiento Comercial"><%- icono('message-circle') %>Consultar con asesor</button>
+  <div class="drawer__pie">
+    <span><%- icono('map-pin') %><%= concesionaria.direccion %></span>
+    <span><%- icono('clock') %><%= concesionaria.horarios %></span>
+  </div>
+</aside>
+
+<main id="contenido">

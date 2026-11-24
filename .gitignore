@@ -1,0 +1,7 @@
+node_modules/
+.env
+# Fotos subidas desde el panel (las del stock inicial sí van al repo)
+public/img/vehiculos/subidas/*
+!public/img/vehiculos/subidas/.gitkeep
+# Configuración local del editor / Claude
+.claude/
